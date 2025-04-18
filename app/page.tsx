@@ -17,7 +17,14 @@ const Home = () => {
           className="rounded-lg shadow-lg"
         />
       </div>
-      
+      <div>
+        <h3>we prepare bootcamp for students in the following aspects</h3>
+        <p>cyber security <img src="/images/cybersecurity.jpg" alt="Tech Club" width={100} height={100} className="rounded-lg shadow-lg" /></p>
+        <p>web development <img src="/images/webdevelopment.jpg" alt="Tech Club" width={100} height={100} className="rounded-lg shadow-lg" /></p>
+        <p>machine learning <img src="/images/machinelearning.jpg" alt="Tech Club" width={100} height={100} className="rounded-lg shadow-lg" /></p>
+        <p>graphic design <img src="/images/graphicdesign.jpg" alt="Tech Club" width={100} height={100} className="rounded-lg shadow-lg" /></p>
+        <p>Others</p>
+      </div>
       <div className="mx-4 sm:mx-12 mt-16">
         <h3 className="text-3xl font-bold text-center text-gray-800 mt-10">
           This is about us, and you can also contact us here

@@ -3,10 +3,9 @@ import UserNavbar from '../user_nav/page';
 
 const Attendance = () => {
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gray-100 pt-12">
       <UserNavbar />
-
-      <div className="max-w-xl mx-auto mt-16 bg-white p-8 rounded-xl shadow-md">
+      <div className="flex flex-col  justify-center max-w-sm mx-auto mt-26 bg-white p-8 rounded-xl shadow-md">
         <h1 className="text-3xl font-bold text-center text-gray-800 mb-4">
           Fill Your Attendance
         </h1>
@@ -43,7 +42,7 @@ const Attendance = () => {
         </form>
       </div>
 
-      <footer className="mt-16 p-12 text-center bg-gray-500 text-white text-2x">
+      <footer className="mt-26 p-12 text-center bg-gray-500 text-white text-2x  w-full bottom-0 left-0">
         {new Date().getFullYear()} &copy; Tech Club
       </footer>
     </div>

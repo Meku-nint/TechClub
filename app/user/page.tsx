@@ -39,7 +39,7 @@ const User = () => {
   </div>
 </div>
 <footer>
-        <p className='text-center text-black-600 mt-10 p-10 bg-gray-600 '>{new Date().getFullYear()} &copy;Tech Club</p>
+        <p className='text-center text-white p-10 bg-gray-700 font-bold text-xl'>{new Date().getFullYear()} &copy;Tech Club</p>
       </footer>
     </div>
   );
