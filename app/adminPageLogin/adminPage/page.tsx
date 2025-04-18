@@ -13,11 +13,11 @@ const AdminPage = () => {
   }
   return (
     <div>
-      <nav className="fixed w-full flex items-center justify-between bg-black text-white p-4">
+      <nav className="fixed w-full flex sm:flex-row flex-col sm:items-center justify-between bg-black text-white sm:p-6 p-4">
         <Link href="/">
-          <Image src="/images/logo.png" alt="AAU Tech Club" width={100} height={100} className="rounded-lg shadow-lg" />
+          <Image src="/images/logo.png" alt="AAU Tech Club" width={100} height={100} className="rounded-lg hidden sm:block shadow-lg" />
         </Link>
-        <ul className="flex gap-6 items-center list-none m-0 pr-8">
+        <ul className="flex flex-col sm:flex-row sm:gap-6 gap-1 pl-4 sm:items-center list-none m-0 pr-8">
           <li className="text-lg hover:text-blue-400 transition-colors duration-300">
             <Link href="/adminPageLogin/adminPage">Home</Link>
           </li>
@@ -28,11 +28,11 @@ const AdminPage = () => {
             <Link href="">Logout</Link>
           </li>
           <li className="text-lg hover:text-blue-400 transition-colors duration-300">
-            <Link href="">Attendance fill</Link>
+            <Link href="/adminPageLogin/fillAttendance">Attendance</Link>
           </li>
         </ul>
       </nav>
-      <h1 className="text-4xl font-extrabold text-center text-gray-800 mb-6 pt-23 tracking-tight bg-red-100 p-13">
+      <h1 className="text-4xl font-extrabold text-center text-gray-800 mb-6 pt-53 sm:pt-23 tracking-tight bg-red-100 p-13">
             Welcome to Admin Page
           </h1>
       <div className="p-8">
@@ -50,20 +50,20 @@ const AdminPage = () => {
                 setAddStudent(false);
                 setPostAttendance(false);
               }}
-              className="w-1/5 cursor-pointer text-xl font-bold  bg-blue-300 hover:bg-blue-600 text-white px-10 py-5  transition-all duration-300"
+              className="w-1/3 sm:w-1/5 cursor-pointer text-xl font-bold  bg-blue-300 hover:bg-blue-600 text-white sm:px-10 sm:py-5 transition-all duration-300"
             >Manage students (club members)
             </button>
             <button onClick={() =>{ setAddStudent(!addStudent)
                 setShowManageStudent(false);
                 setPostAttendance(false);
               }}
-             className="w-1/5 cursor-pointer text-xl font-bold  bg-blue-300 hover:bg-blue-600 text-white px-10 py-5 rounded-[0%] transition-all duration-300"
+             className="w-1/3 sm:w-1/5 cursor-pointer text-xl font-bold  bg-blue-300 hover:bg-blue-600 text-white sm:px-10 sm:py-5 rounded-[0%] transition-all duration-300"
             >Add student to club (add members)</button>
             <button onClick={() =>{ setPostAttendance(!postAttendance)
                 setShowManageStudent(false);
                 setAddStudent(false);
               }}
-             className="w-1/5 cursor-pointer text-xl font-bold  bg-blue-300 hover:bg-blue-600 text-white px-10 py-5  transition-all duration-300"
+             className="w-1/3 sm:w-1/5 cursor-pointer text-xl font-bold  bg-blue-300 hover:bg-blue-600 text-white sm:px-10 sm:py-5  transition-all duration-300"
             >post event and attendance</button>
           </div>
           {showManageStudent && (  

@@ -77,8 +77,8 @@ const LoginCreateAccount = () => {
          </form>
        </div>
       )}
-            <footer>
-        <p className='text-center text-black-600 p-10 bg-gray-200 '>{new Date().getFullYear()} &copy;Tech Club</p>
+       <footer>
+        <p className='text-center text-white p-10 bg-gray-700 font-bold text-xl'>{new Date().getFullYear()} &copy;Tech Club</p>
       </footer>
     </div>
   )

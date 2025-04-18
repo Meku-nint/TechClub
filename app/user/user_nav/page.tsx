@@ -28,7 +28,7 @@ const UserNavbar = () => {
 
   return (
     <div className="m-0 z-50 p-0 w-full fixed top-0">
-      <nav className="flex items-center justify-between bg-black text-white p-4">
+      <nav className="flex items-center justify-between bg-black text-white p-6">
         <Link href="/user">
           <Image src="/images/logo.png" alt="AAU Tech Club" width={100} height={100} className="rounded-lg shadow-lg" />
         </Link>

@@ -42,7 +42,7 @@ const Attendance = () => {
         </form>
       </div>
 
-      <footer className="mt-26 p-12 text-center bg-gray-500 text-white text-2x  w-full bottom-0 left-0">
+      <footer className="mt-26 sm:p-12 p-5 text-center bg-gray-500 text-white text-2x  w-full bottom-0 left-0">
         {new Date().getFullYear()} &copy; Tech Club
       </footer>
     </div>
