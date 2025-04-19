@@ -5,13 +5,15 @@ import Navbar from '../navbar/page';
 
 const LoginCreateAccount = () => {
   const [isLogin, setIsLogin] = useState(true);
-  const [isClient, setIsClient] = useState(false);
+  const [isClient, setIsClient] = useState(false); // For detecting client-side rendering
+
   const [createData, setCreateData] = useState({
     name: '',
     email: '',
     username: '',
     password: ''
   });
+
   const [loginData, setLoginData] = useState({
     username: '',
     password: ''
@@ -40,9 +42,11 @@ const LoginCreateAccount = () => {
     e.preventDefault();
     console.log('Creating account with data:', createData);
   };
+
   const  createAccountHandlerSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log('Creating account with data:', { ...createData, password: '[REDACTED]' });
+    
     try {
       console.log('Sending request to /api/users...');
       const response = await fetch('/api/users', {
@@ -51,13 +55,18 @@ const LoginCreateAccount = () => {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(createData)
-      });   
+      });
+      
       console.log('Response status:', response.status);
-            let data;
+      
+      // Try to parse the response as JSON
+      let data;
       try {
         const text = await response.text();
         console.log('Response text:', text);
-                try {
+        
+        // Try to parse as JSON
+        try {
           data = JSON.parse(text);
           console.log('Response data:', data);
         } catch (parseError) {
@@ -72,13 +81,17 @@ const LoginCreateAccount = () => {
       }
       
       if (!response.ok) {
+        // Handle error response
         const errorMessage = data.error || data.details || 'Failed to create account';
         console.error('Server error:', errorMessage);
         alert(`Error: ${errorMessage}`);
         return;
       }
-            console.log('Account created successfully');
+      
+      // Success
+      console.log('Account created successfully');
       alert('Account created successfully!');
+      // Reset form or redirect
       setCreateData({
         name: '',
         email: '',
@@ -90,12 +103,13 @@ const LoginCreateAccount = () => {
       alert('An error occurred while creating your account. Please try again.');
     }
   };
+
   return (
     <div>
       <Navbar />
       {isClient && !isLogin && (
         <div style={{ backgroundColor: 'hsl(215.3, 25%, 26.7%)' }} className="mt-16 flex justify-center items-center h-screen pb-4">
-          <form onSubmit={createAccountHandlerSubmit} className="bg-white p-4 m-3 rounded-lg shadow-lg w-full max-w-md">
+          <form onSubmit={createAccountHandlerSubmit} className="bg-white p-4 rounded-lg shadow-lg w-full max-w-md">
             <h2 className="text-2xl font-bold text-center text-gray-800 mb-4">Create an Account</h2>
             <div className="flex flex-col gap-4">
               <input
@@ -160,7 +174,7 @@ const LoginCreateAccount = () => {
 
       {isClient && isLogin && (
         <div style={{ backgroundColor: 'hsl(215.3, 25%, 26.7%)' }} className="mt-16 flex justify-center items-center h-screen bg-gray-100">
-          <form onSubmit={loginHandlerSubmit} className="bg-white p-8 m-3 rounded-lg shadow-lg w-full max-w-md">
+          <form onSubmit={loginHandlerSubmit} className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
             <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">Login to your account</h2>
             <div className="flex flex-col gap-4">
               <input
@@ -204,4 +218,5 @@ const LoginCreateAccount = () => {
     </div>
   );
 };
+
 export default LoginCreateAccount;

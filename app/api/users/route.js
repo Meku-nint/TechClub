@@ -7,7 +7,9 @@ import User from "../../../model/schema.js";
 export async function POST(request) {
     try {
         console.log('Starting user creation process...');
-                let body;
+        
+        // Parse request body first to validate input
+        let body;
         try {
             body = await request.json();
             console.log('Request body parsed successfully:', { ...body, password: '[REDACTED]' });
@@ -20,6 +22,8 @@ export async function POST(request) {
         }
         
         const { name, email, username, password } = body;
+
+        // Validate required fields
         if (!name || !email || !username || !password) {
             console.log('Missing required fields:', { name: !!name, email: !!email, username: !!username, password: !!password });
             return NextResponse.json(
@@ -27,6 +31,8 @@ export async function POST(request) {
                 { status: 400 }
             );
         }
+
+        // Connect to database
         console.log('Connecting to database...');
         try {
             await connectToDatabase();
@@ -67,6 +73,8 @@ export async function POST(request) {
                 { status: 500 }
             );
         }
+
+        // Hash password
         console.log('Hashing password...');
         let hashedPassword;
         try {
@@ -79,6 +87,8 @@ export async function POST(request) {
                 { status: 500 }
             );
         }
+
+        // Create and save user
         console.log('Creating new user...');
         try {
             const user = new User({
