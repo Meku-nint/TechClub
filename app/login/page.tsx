@@ -1,19 +1,18 @@
 'use client';
-
 import React, { useEffect, useState } from 'react';
 import Navbar from '../navbar/page';
-
 const LoginCreateAccount = () => {
   const [isLogin, setIsLogin] = useState(true);
-  const [isClient, setIsClient] = useState(false); // For detecting client-side rendering
-
-  const [createData, setCreateData] = useState({
+  const [isClient, setIsClient] = useState(false); 
+  const [isLoading,setIsLoading]= useState(false);
+  const [fromServer,setFromServer]= useState('');
+  const [createData, setCreateData] 
+  = useState({
     name: '',
     email: '',
     username: '',
     password: ''
   });
-
   const [loginData, setLoginData] = useState({
     username: '',
     password: ''
@@ -40,15 +39,13 @@ const LoginCreateAccount = () => {
 
   const loginHandlerSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log('Creating account with data:', createData);
+    setIsLoading(true);
   };
 
   const  createAccountHandlerSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log('Creating account with data:', { ...createData, password: '[REDACTED]' });
-    
+    setIsLoading(true);
     try {
-      console.log('Sending request to /api/users...');
       const response = await fetch('/api/users', {
         method: 'POST',
         headers: {
@@ -56,52 +53,34 @@ const LoginCreateAccount = () => {
         },
         body: JSON.stringify(createData)
       });
-      
-      console.log('Response status:', response.status);
-      
-      // Try to parse the response as JSON
       let data;
       try {
         const text = await response.text();
-        console.log('Response text:', text);
-        
-        // Try to parse as JSON
-        try {
-          data = JSON.parse(text);
-          console.log('Response data:', data);
-        } catch (parseError) {
-          console.error('Error parsing response as JSON:', parseError);
-          alert('Server returned an invalid response. Please try again later.');
-          return;
-        }
-      } catch (textError) {
-        console.error('Error reading response text:', textError);
-        alert('Error reading server response. Please try again later.');
+        data = JSON.parse(text);
+      } 
+      catch (error) {
+        alert('An error occurred while creating your account. Please try again.');
         return;
       }
       
       if (!response.ok) {
-        // Handle error response
         const errorMessage = data.error || data.details || 'Failed to create account';
-        console.error('Server error:', errorMessage);
-        alert(`Error: ${errorMessage}`);
+        setFromServer(errorMessage);
         return;
-      }
-      
-      // Success
-      console.log('Account created successfully');
-      alert('Account created successfully!');
-      // Reset form or redirect
+      }      
+      setFromServer(data.message);
       setCreateData({
         name: '',
         email: '',
         username: '',
-        password: ''
+        password: '',
       });
     } catch (error) {
-      console.error('Error creating account:', error);
-      alert('An error occurred while creating your account. Please try again.');
+      setFromServer('An error occurred while creating your account. Please try again.');
     }
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 10000);
   };
 
   return (
@@ -109,8 +88,13 @@ const LoginCreateAccount = () => {
       <Navbar />
       {isClient && !isLogin && (
         <div style={{ backgroundColor: 'hsl(215.3, 25%, 26.7%)' }} className="mt-16 flex justify-center items-center h-screen pb-4">
-          <form onSubmit={createAccountHandlerSubmit} className="bg-white p-4 rounded-lg shadow-lg w-full max-w-md">
+          <form onSubmit={createAccountHandlerSubmit} className="bg-white p-4 m-3 rounded-lg shadow-lg w-full max-w-md">
             <h2 className="text-2xl font-bold text-center text-gray-800 mb-4">Create an Account</h2>
+            {fromServer && (
+              <p className="text-center text-md text-red-600 mt-4 mb-4 animate-bounce ">
+                {fromServer}
+              </p>
+            )}
             <div className="flex flex-col gap-4">
               <input
                 type="text"
@@ -148,18 +132,15 @@ const LoginCreateAccount = () => {
                 required
                 className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
-              <input
-                type="password"
-                name="confirmPassword"
-                placeholder="Confirm password"
-                required
-                className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
             </div>
-            <button
+            <button 
               type="submit"
-              className="w-full mt-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
+              className={`w-full mt-6 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 
+                ${isLoading 
+                  ? 'bg-blue-500 text-white opacity-50 cursor-not-allowed' 
+                  : 'bg-blue-600 text-white hover:bg-blue-700 cursor-pointer'
+                }`}
+                            >
               Create an account
             </button>
             <p className="text-center text-sm text-gray-600 mt-4">
@@ -174,7 +155,7 @@ const LoginCreateAccount = () => {
 
       {isClient && isLogin && (
         <div style={{ backgroundColor: 'hsl(215.3, 25%, 26.7%)' }} className="mt-16 flex justify-center items-center h-screen bg-gray-100">
-          <form onSubmit={loginHandlerSubmit} className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+          <form onSubmit={loginHandlerSubmit} className="bg-white m-3 p-8 rounded-lg shadow-lg w-full max-w-md">
             <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">Login to your account</h2>
             <div className="flex flex-col gap-4">
               <input
@@ -218,5 +199,4 @@ const LoginCreateAccount = () => {
     </div>
   );
 };
-
 export default LoginCreateAccount;

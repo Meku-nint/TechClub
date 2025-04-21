@@ -6,11 +6,43 @@ import ManageStudent from './student/page'
 const AdminPage = () => {
   const [showManageStudent, setShowManageStudent] = useState(false);
   const [addStudent, setAddStudent] = useState(false);
+  const [studentId, setStudentId] = useState("");
+  const [isLoading,setIsLoading] = useState(false);
+  const [responseFromServer, setResponseFromServer] = useState("");
   const[postAttendance,setPostAttendance]= useState(false)
   const addAdminHandler=()=>{
     const email =prompt("Admin email");
     const password =prompt("Admin password");
   }
+  const allowStudentHandler = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setResponseFromServer("");
+  
+    try {
+      const response = await fetch("/api/allows", {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ studentId: studentId })
+      });
+  
+      const data = await response.json();
+  
+      if (!response.ok) {
+        const errorMessage = data.error || data.details || "Failed to allow student.";
+        setResponseFromServer(errorMessage);
+      } else {
+        setResponseFromServer(data.message);
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      setResponseFromServer("An error occurred. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
   return (
     <div>
       <nav className="fixed w-full flex sm:flex-row flex-col sm:items-center justify-between bg-black text-white sm:p-6 p-4">
@@ -76,14 +108,20 @@ const AdminPage = () => {
   {addStudent && (
     <div className="bg-white shadow-md rounded-xl p-6 mb-6 w-full max-w-md">
       <h1 className="text-xl font-semibold mb-4 text-gray-800">Allow users to register to the club</h1>
+    <form onSubmit={allowStudentHandler}>
+      <p className='text-red-500 mb-4 text-xl animate-bounce '>{responseFromServer}</p>
       <input 
-        type="text" 
+        type="text" required onChange={(e) => setStudentId(e.target.value)}
         placeholder="Enter student ID (UGR/XXXX/XX)" 
         className="w-full p-2 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-blue-400"
       />
-      <button className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition">
-        Allow to Register
+<button
+  className={`bg-blue-500 text-white px-4 py-2 rounded-lg transition hover:bg-blue-600 ${isLoading ? 'opacity-50 cursor-not-allowed bg-gray-400' : ''}`}
+  type="submit">
+            Allow to Register
       </button>
+
+      </form>
     </div>
   )}
 

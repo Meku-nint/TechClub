@@ -18,6 +18,22 @@ const userSchema = new Schema({
         required: true
     }
 })
-
+const AllowSchema=new mongoose.Schema({
+    studentId: {
+        type: String,
+        required: true
+    }
+})
+const EventSchema=new mongoose.Schema({
+    description: {
+        type: String,
+        required: true
+    },
+    address:{
+        type: String,
+        required: false
+    }
+})
 const User = mongoose.model('User', userSchema);
-export default User;
+const AllowStudent=mongoose.model('AllowStudent',AllowSchema);
+export default {User,AllowStudent}
