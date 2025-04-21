@@ -2,6 +2,9 @@ import bcrypt from 'bcryptjs';
 import { NextResponse } from 'next/server';
 import connectToDatabase from "../../../lib/connectdb.js";
 import User from "../../../model/schema.js";
+import AllowStudent from "../../../model/schema.js";
+// this about creating a new user i mean the member of the club by checking the system if the user exist or not 
+// if the user is allowed to register then it will be saved in the database.
 export async function POST(request) {
     try {
         let body;
@@ -30,6 +33,13 @@ export async function POST(request) {
             );
         }
         try {
+            let isAllowed=await AllowStudent.findOne({studentId:username});
+            if(!isAllowed){
+                return NextResponse.json(
+                    { error: "User is not allowed to register" },
+                    { status: 400 }
+                );
+            }
             let existingUser = await User.findOne({ username });
             let existingEmail = await User.findOne({ email });
 
@@ -86,4 +96,4 @@ export async function POST(request) {
             { status: 500 }
         );
     }
-}                   
+}            
