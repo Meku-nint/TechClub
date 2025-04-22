@@ -1,9 +1,7 @@
 import { NextResponse } from "next/server";
 import connectToDatabase from "../../../lib/connectdb";
 import models from "../../../model/schema";
-
 const { AllowStudent } = models;
-
 export async function POST(request) {
     try {
         await connectToDatabase();

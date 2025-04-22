@@ -1,39 +1,51 @@
 import mongoose from "mongoose";
 const Schema = mongoose.Schema;
+
 const userSchema = new Schema({
-    name:{
+    name: {
         type: String,
         required: true
     },
     email: {
         type: String,
-        required: true
+        required: true,
+        unique: true // optional: ensures uniqueness
     },
     username: {
-        type:String,
-        required: true
+        type: String,
+        required: true,
+        unique: true // optional: ensures uniqueness
     },
     password: {
         type: String,
         required: true
+    },
+    token: {
+        type: String,
+        default:"token",
+        required: false
     }
-})
-const AllowSchema=new mongoose.Schema({
+});
+
+const allowSchema = new mongoose.Schema({
     studentId: {
         type: String,
-        required: true
+        required: true,
     }
-})
-const EventSchema=new mongoose.Schema({
+});
+
+const eventSchema = new mongoose.Schema({
     description: {
         type: String,
         required: true
     },
-    address:{
+    address: {
         type: String,
+        default:" ",
         required: false
     }
-})
-const User = mongoose.model('User', userSchema);
-const AllowStudent=mongoose.model('AllowStudent',AllowSchema);
-export default {User,AllowStudent}
+});
+const User = mongoose.models.User || mongoose.model("User", userSchema);
+const AllowStudent = mongoose.models.AllowStudent || mongoose.model("AllowStudent", allowSchema);
+const Event = mongoose.models.Event || mongoose.model("Event", eventSchema);
+export default { User, AllowStudent, Event };

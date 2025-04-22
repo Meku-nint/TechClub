@@ -53,34 +53,23 @@ const LoginCreateAccount = () => {
         },
         body: JSON.stringify(createData)
       });
-      let data;
-      try {
-        const text = await response.text();
-        data = JSON.parse(text);
-      } 
-      catch (error) {
-        alert('An error occurred while creating your account. Please try again.');
-        return;
-      }
-      
-      if (!response.ok) {
-        const errorMessage = data.error || data.details || 'Failed to create account';
-        setFromServer(errorMessage);
-        return;
-      }      
+     const data=await response.json();  
+     if(!response.ok){ 
+      setFromServer(data.error);
+
+     }else{
       setFromServer(data.message);
-      setCreateData({
-        name: '',
-        email: '',
-        username: '',
-        password: '',
-      });
+     }
+      // setCreateData({
+      //   name: '',
+      //   email: '',
+      //   username: '',
+      //   password: '',
+      // });
     } catch (error) {
       setFromServer('An error occurred while creating your account. Please try again.');
     }
-    setTimeout(() => {
       setIsLoading(false);
-    }, 10000);
   };
 
   return (
