@@ -60,12 +60,12 @@ const LoginCreateAccount = () => {
      }else{
       setFromServer(data.message);
      }
-      // setCreateData({
-      //   name: '',
-      //   email: '',
-      //   username: '',
-      //   password: '',
-      // });
+      setCreateData({
+         name: '',
+        email: '',
+      username: '',
+        password: '',
+       });
     } catch (error) {
       setFromServer('An error occurred while creating your account. Please try again.');
     }

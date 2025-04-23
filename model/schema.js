@@ -1,6 +1,28 @@
+import { time } from "console";
 import mongoose from "mongoose";
 const Schema = mongoose.Schema;
-
+const adminInfoSchema = new Schema({
+    email: {
+        type: String,
+        required: true
+    },
+    telegram: {
+        type: String,
+        required: true
+    },
+    phone: {
+        type: String,
+        required: true
+    },
+    location: {
+        type: String,
+        required: true
+    },
+    prove:{
+        type:String,
+        default:'1221'
+    }
+})
 const userSchema = new Schema({
     name: {
         type: String,
@@ -9,12 +31,12 @@ const userSchema = new Schema({
     email: {
         type: String,
         required: true,
-        unique: true // optional: ensures uniqueness
+        unique: true 
     },
     username: {
         type: String,
         required: true,
-        unique: true // optional: ensures uniqueness
+        unique: true
     },
     password: {
         type: String,
@@ -33,7 +55,20 @@ const allowSchema = new mongoose.Schema({
         required: true,
     }
 });
-
+const attendanceSchema = new mongoose.Schema({
+    today: {
+        type: Date,
+        required: true
+    },
+    length: {
+        type: String,
+        required: true
+    },
+    token:{
+        type: String,
+        required: true 
+    }
+}, { timestamps: true });
 const eventSchema = new mongoose.Schema({
     description: {
         type: String,
@@ -45,7 +80,20 @@ const eventSchema = new mongoose.Schema({
         required: false
     }
 });
+const adminSchema=new mongoose.Schema({
+    email:{
+        type:String,
+        required:true
+    },
+    password:{
+        type:String,
+        required:true
+    }
+})
+const Admin=mongoose.models.Admin || mongoose.model("Admin", adminSchema);
+const Attendance=mongoose.models.Attendance || mongoose.model("Attendance", attendanceSchema);
 const User = mongoose.models.User || mongoose.model("User", userSchema);
 const AllowStudent = mongoose.models.AllowStudent || mongoose.model("AllowStudent", allowSchema);
 const Event = mongoose.models.Event || mongoose.model("Event", eventSchema);
-export default { User, AllowStudent, Event };
+const AdminInfo = mongoose.models.AdminInfo || mongoose.model("AdminInfo", adminInfoSchema);
+export default { User, AllowStudent, Event,Admin,Attendance,AdminInfo };

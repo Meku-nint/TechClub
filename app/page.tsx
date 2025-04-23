@@ -1,3 +1,4 @@
+
 import Navbar from './navbar/page'
 import Image from 'next/image'
 const Home = () => {
@@ -91,8 +92,6 @@ Join us for an exciting 3-day bootcamp packed with hands-on workshops, inspiring
   <p className="text-lg text-gray-600 text-center mt-6 max-w-3xl mx-auto sm:text-xl">
     Tech Club is a student-led initiative focused on fostering curiosity and growth in the world of technology.
     We empower learners through hands-on experiences, resources, and a vibrant community of tech enthusiasts.
-    <strong>more than 120 students</strong> are currently enrolled in our bootcamps. <strong></strong>
-
   </p>
   </div>
   

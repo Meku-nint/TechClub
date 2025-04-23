@@ -13,12 +13,49 @@ const AdminPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [responseFromServer, setResponseFromServer] = useState("");
   const [postAttendance, setPostAttendance] = useState(false);
+  const [attendance,setAttendance]=useState({
+    today:'',
+    length:''
+  })
+  const addAdminHandler = async() => {
+   var email = prompt("Admin email");
+   var password = prompt("Admin password");
+   var uniqueCode=prompt("Enter the unique code");
+   if(uniqueCode!=="ADMIN"){
+    alert ("The unique code is not correct");
+    return;
+   }
+    if(!email||!password){
+    alert("all inputs are required");
+    return ;
+   }
+   try {
+    const response=await fetch('/api/admin',{
+        method:'POST',
+        headers:{
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({email,password})
+    })
+    const data=await response.json();
+    if(!response.ok){
+        alert(data.error);
+    }
+    else{
+        alert (data.message);
+    }
+} catch (error) {
+    alert("There is problem on adding admin")
+   }
 
-  const addAdminHandler = () => {
-    const email = prompt("Admin email");
-    const password = prompt("Admin password");
   };
-
+const attendanceHandler=(e: React.ChangeEvent<HTMLInputElement>)=>{
+  const {name,value}=e.target;
+  setAttendance((prev)=>({
+    ...prev,
+    [name]:value
+  }))
+}
   const allowStudentHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
@@ -48,7 +85,31 @@ const AdminPage = () => {
       setIsLoading(false);
     }
   };
-
+ const postAttendanceHandler =async(e:React.FormEvent<HTMLFormElement>)=>{
+  e.preventDefault();
+    try {
+      const response=await fetch('/api/postattendance',{
+        method:'POST',
+        headers:{
+          'Content-Type': 'application/json'
+      },
+      body:  JSON.stringify(attendance)
+      });
+      const data=await response.json();
+      if(!response.ok){
+        alert(data.error);
+      }
+      else{
+        alert(data.message);
+      }
+    } catch (error) {
+      alert("There is error in posting attendance")
+    }
+    setAttendance({
+      today:'',
+      length:''
+    })
+ }
   return (
     <div>
       <nav className="fixed w-full flex sm:flex-row flex-col sm:items-center justify-between bg-black text-white sm:p-6 p-4">
@@ -181,22 +242,22 @@ const AdminPage = () => {
             )}
 
             {postAttendance && (
-              <div className="bg-white shadow-md rounded-xl p-6 w-full max-w-md">
+              <form className="bg-white shadow-md rounded-xl p-6 w-full max-w-md" onSubmit={postAttendanceHandler}>
                 <h1 className="text-xl font-semibold mb-4 text-gray-800">
                   Post Attendance
                 </h1>
                 <input
-                  type="date"
+                  type="date" value={attendance.today} name="today"  onChange={attendanceHandler} required
                   className="w-full p-2 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-blue-400"
                 />
                 <input
-                  type="time"
+                  type="time"value={attendance.length} name="length" onChange={attendanceHandler} required
                   className="w-full p-2 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-blue-400"
                 />
                 <button className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition">
                   Post
                 </button>
-              </div>
+              </form>
             )}
           </div>
         </div>
@@ -210,5 +271,4 @@ const AdminPage = () => {
     </div>
   );
 };
-
 export default AdminPage;
