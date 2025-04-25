@@ -1,7 +1,16 @@
-
-import Navbar from './navbar/page'
 import Image from 'next/image'
-const Home = () => {
+import Navbar from './navbar/page'
+async function getData() {
+  const res = await fetch('http://localhost:3000/api/home', { cache: 'no-store' });
+  if (!res.ok) {
+    throw new Error('Failed to fetch data');
+  }
+  return res.json();
+}
+
+export default async function Home() {
+  const { events, contact } = await getData();
+
   return (
     <div className="font-sans bg-gray-50 text-gray-800 pt-2">
       <Navbar />
@@ -21,15 +30,9 @@ const Home = () => {
         className="inline-block ml-2" />
       </summary>
       <p className='text-blue-700'>
-📢 General Event Announcement
-🚀 Tech Club Presents: Innovation Bootcamp 2025!
-Join us for an exciting 3-day bootcamp packed with hands-on workshops, inspiring talks, and networking opportunities in the world of tech! Whether you're into web development, AI, or design—there's something for everyone.
-🗓 Date: May 10–12, 2025
-📍 Location: AAU Main Campus, Tech Hall
-🎯 Open to: All students & tech enthusiasts
-🎟 Entry: Free (Registration Required)
-👉 Register now: example.com/register
+         {events.description}
         </p>
+        <a href='#'>{events.address}</a>
       </details>
         
       </div>
@@ -112,7 +115,7 @@ Join us for an exciting 3-day bootcamp packed with hands-on workshops, inspiring
       href="mailto:3s2Tt@example.com"
       className="text-blue-600 hover:text-blue-800 underline break-all"
     >
-      3s2Tt@example.com
+      {contact.email}
     </a>
   </li>
   <li className="flex items-start gap-3">
@@ -123,16 +126,16 @@ Join us for an exciting 3-day bootcamp packed with hands-on workshops, inspiring
       rel="noopener noreferrer"
       className="text-blue-600 hover:text-blue-800 underline break-all"
     >
-      https://t.me/TechClubAAU
+      {contact.telegram}
     </a>
   </li>
   <li className="flex items-start gap-3">
     <span className="font-semibold w-24">Phone:</span>
-    <span>123-456-7890</span>
+    <span>{contact.phone}</span>
   </li>
   <li className="flex items-start gap-3">
     <span className="font-semibold w-24">Address:</span>
-    <span>123 Main St, Anytown, USA</span>
+    <span>{contact.location}</span>
   </li>
 </ul>
   </div>
@@ -143,4 +146,3 @@ Join us for an exciting 3-day bootcamp packed with hands-on workshops, inspiring
     </div>
   )
 }
-export default Home;

@@ -1,4 +1,3 @@
-import { time } from "console";
 import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 const adminInfoSchema = new Schema({
@@ -62,11 +61,13 @@ const attendanceSchema = new mongoose.Schema({
     },
     length: {
         type: String,
-        required: true
+        required: false,
+        default: "30"
     },
     token:{
         type: String,
-        required: true 
+        required: true,
+        default:"token" 
     }
 }, { timestamps: true });
 const eventSchema = new mongoose.Schema({
@@ -76,8 +77,7 @@ const eventSchema = new mongoose.Schema({
     },
     address: {
         type: String,
-        default:" ",
-        required: false
+        required: true
     }
 });
 const adminSchema=new mongoose.Schema({
@@ -90,10 +90,36 @@ const adminSchema=new mongoose.Schema({
         required:true
     }
 })
+const UserAttendanceSchema = new mongoose.Schema({
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
+  date: {
+    type: Date,
+    required: true,
+    default: Date.now
+  },
+  status: {
+    type: String,
+    enum: ['present', 'absent'],
+    required: true
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now
+  }
+});
+
+// Add index for efficient querying
+UserAttendanceSchema.index({ userId: 1, date: 1 }, { unique: true });
+
 const Admin=mongoose.models.Admin || mongoose.model("Admin", adminSchema);
 const Attendance=mongoose.models.Attendance || mongoose.model("Attendance", attendanceSchema);
 const User = mongoose.models.User || mongoose.model("User", userSchema);
 const AllowStudent = mongoose.models.AllowStudent || mongoose.model("AllowStudent", allowSchema);
 const Event = mongoose.models.Event || mongoose.model("Event", eventSchema);
 const AdminInfo = mongoose.models.AdminInfo || mongoose.model("AdminInfo", adminInfoSchema);
-export default { User, AllowStudent, Event,Admin,Attendance,AdminInfo };
+const UserAttendance = mongoose.models.UserAttendance || mongoose.model('UserAttendance', UserAttendanceSchema);
+export default { User, AllowStudent, Event,Admin,Attendance,AdminInfo,UserAttendance };

@@ -1,61 +1,81 @@
 'use client'
-import React, { useState } from 'react'
-import Link from 'next/link'
-import Image from 'next/image'
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { useState } from 'react';
 
 const UserNavbar = () => {
-  const [changeName, setChangeName] = useState(false);
-  const [changePassword, setChangePassword] = useState(false);
-  const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedValue = e.target.value;
+  const router = useRouter();
+  const [showDropdown, setShowDropdown] = useState(false);
 
-    if (selectedValue === "full_name") {
-      var name=prompt("Enter your full name");
-      var password = prompt("Enter your password");
-       if (name && password) {
-        console.log("Name:", name);
-        console.log("Password:", password);
-      }
-    } else if (selectedValue === "password") {
-      var password = prompt("Enter your old password");
-      var newPassword = prompt("Enter your new password");
-      if (password && newPassword) {
-        console.log("Old Password:", password);
-        console.log("New Password:", newPassword);
-      }
-    }
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    router.push('/login');
   };
 
   return (
-    <div className="m-0 z-50 p-0 w-full fixed top-0">
-      <nav className="flex items-center justify-between bg-black text-white p-6">
-        <Link href="/user">
-          <Image src="/images/logo.png" alt="AAU Tech Club" width={100} height={100} className="rounded-lg shadow-lg" />
-        </Link>
-        <ul className="flex gap-6 items-center list-none m-0 pr-8">
-          <li className="text-lg hover:text-blue-400 transition-colors duration-300">
-            <Link href="/user">Home</Link>
-          </li>
-          <li className="text-lg hover:text-blue-400 transition-colors duration-300">
-            <Link href="/user/attendance">Attendance</Link>
-          </li>
-          <li className="hover:text-blue-400 transition-colors duration-300">
-            <select
-              className='text-lg hover:text-blue-400 transition-colors duration-300 max-w-20'
-              onChange={(e) => handleSelectChange(e)}
-              defaultValue=""
-            >
-              <option disabled value="" className=''>Setting</option>
-              <option value="full_name" className='text-xl text-black mb-2 ml-4'>Change Name</option>
-              <option value="password" className='text-xl text-black mb-2 ml-4'>Change password</option>
-            </select>
-          </li>
-          <li className="text-lg hover:text-blue-400 transition-colors duration-300">
-            <Link href="#logout">Logout</Link>
-          </li>
-        </ul>
-      </nav>
-    </div>
-  )
-}
+    <nav className="bg-white shadow-lg">
+      <div className="max-w-7xl mx-auto px-4">
+        <div className="flex justify-between h-16">
+          <div className="flex">
+            <div className="flex-shrink-0 flex items-center">
+              <Link href="/user" className="text-xl font-bold text-gray-800">
+                AAU Tech Club
+              </Link>
+            </div>
+          </div>
+
+          <div className="flex items-center">
+            <div className="relative">
+              <button
+                onClick={() => setShowDropdown(!showDropdown)}
+                className="flex items-center space-x-2 text-gray-700 hover:text-gray-900 focus:outline-none"
+              >
+                <span>Menu</span>
+                <svg
+                  className="h-5 w-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </button>
+
+              {showDropdown && (
+                <div className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+                  <div
+                    className="py-1"
+                    role="menu"
+                    aria-orientation="vertical"
+                    aria-labelledby="user-menu"
+                  >
+                    <Link
+                      href="/user/settings"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      role="menuitem"
+                    >
+                      Settings
+                    </Link>
+                    <button
+                      onClick={handleLogout}
+                      className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      role="menuitem"
+                    >
+                      Logout
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+  );
+};
+
 export default UserNavbar;
