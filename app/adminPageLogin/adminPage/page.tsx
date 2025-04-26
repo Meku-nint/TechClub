@@ -1,11 +1,13 @@
 'use client';
-import React, { useState } from 'react';
-import Link from 'next/link';
 import Image from 'next/image';
-import ManageStudent from './student/page';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import React, { useEffect, useState } from 'react';
 import SetEventAndHomePage from './homeinfo/page';
+import ManageStudent from './student/page';
 
 const AdminPage = () => {
+  const router = useRouter();
   const [showManageStudent, setShowManageStudent] = useState(false);
   const [addStudent, setAddStudent] = useState(false);
   const [studentId, setStudentId] = useState("");
@@ -17,6 +19,22 @@ const AdminPage = () => {
     today:'',
     length:''
   })
+
+  useEffect(() => {
+    // Check if token exists in localStorage
+    const token = localStorage.getItem('adminToken');
+    
+    if (!token) {
+      router.push('/adminPageLogin');
+    }
+  }, [router]);
+
+  const handleLogout = (e: React.MouseEvent) => {
+    e.preventDefault(); // Prevent default link behavior
+    localStorage.removeItem('adminToken');
+    router.push('/adminPageLogin');
+  };
+
   const addAdminHandler = async() => {
    var email = prompt("Admin email");
    var password = prompt("Admin password");
@@ -130,7 +148,7 @@ const attendanceHandler=(e: React.ChangeEvent<HTMLInputElement>)=>{
             <Link href="" onClick={addAdminHandler}>Add Admin</Link>
           </li>
           <li className="text-lg hover:text-blue-400 transition-colors duration-300">
-            <Link href="">Logout</Link>
+            <a href="#" onClick={handleLogout}>Logout</a>
           </li>
           <li className="text-lg hover:text-blue-400 transition-colors duration-300">
             <Link href="/adminPageLogin/fillAttendance">Attendance</Link>

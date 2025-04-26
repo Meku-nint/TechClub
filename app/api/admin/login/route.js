@@ -16,15 +16,8 @@ export async function POST(request) {
         { status: 400 }
       );
     }
-    const admin = await Admin.findOne({ email });
+    const admin = await Admin.findOne({ email, password });
     if (!admin) {
-      return NextResponse.json(
-        { error: "Invalid credentials" },
-        { status: 401 }
-      );
-    }
-    const isPasswordValid = await (password, admin.password);
-    if (!isPasswordValid) {
       return NextResponse.json(
         { error: "Invalid credentials" },
         { status: 401 }
