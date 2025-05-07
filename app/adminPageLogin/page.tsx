@@ -74,7 +74,6 @@ const AdminLogin = () => {
       if (!response.ok) {
         setErrorMessage(data.error || 'Login failed');
       } else {
-        // Store the token in localStorage
         localStorage.setItem('adminToken', data.token);
         router.push('/adminPageLogin/adminPage');
       }

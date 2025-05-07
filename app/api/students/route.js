@@ -3,43 +3,17 @@ import connectToDatabase from "../../../lib/connectdb";
 import models from "../../../model/schema";
 const { User } = models;
 
-export async function GET() {
+export async function GET(request) {
   try {
-    await connectToDatabase();
-    
-    // Fetch all users with their attendance data
-    const users = await User.find({})
-      .select('name studentId attendance')
-      .lean();
-
-    // Calculate attendance percentage for each user
-    const usersWithPercentage = users.map(user => {
-      // Initialize attendance if it doesn't exist
-      const attendance = user.attendance || {
-        present: 0,
-        total: 0
-      };
-
-      return {
-        ...user,
-        attendance: {
-          present: attendance.present || 0,
-          total: attendance.total || 0,
-          percentage: attendance.total > 0 
-            ? Math.round((attendance.present / attendance.total) * 100)
-            : 0
-        }
-      };
-    });
-
-    return NextResponse.json(usersWithPercentage);
+       const users=await User.find();
+        return NextResponse.json(users);
   } catch (error) {
-    console.error('Error fetching users:', error);
     return NextResponse.json(
       { error: 'Failed to fetch users' },
       { status: 500 }
     );
   }
+
 }
 
 export async function DELETE(request) {

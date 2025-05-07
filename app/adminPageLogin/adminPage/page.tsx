@@ -134,7 +134,7 @@ const attendanceHandler=(e: React.ChangeEvent<HTMLInputElement>)=>{
         <Link href="/">
           <Image
             src="/images/logo.png"
-            alt="AAU Tech Club"
+            alt="Tech Club"
             width={100}
             height={100}
             className="rounded-lg hidden sm:block shadow-lg"
@@ -272,7 +272,9 @@ const attendanceHandler=(e: React.ChangeEvent<HTMLInputElement>)=>{
                   type="time"value={attendance.length} name="length" onChange={attendanceHandler} required
                   className="w-full p-2 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-blue-400"
                 />
-                <button className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition">
+                <button className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition"
+                
+                >
                   Post
                 </button>
               </form>

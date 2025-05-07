@@ -71,7 +71,6 @@ const LoginCreateAccount = () => {
       ...prevData,
       [name]: value
     }));
-    // Clear error when user starts typing
     if (errors[name as keyof FormErrors]) {
       setErrors(prev => ({ ...prev, [name]: '' }));
     }
@@ -83,7 +82,6 @@ const LoginCreateAccount = () => {
       ...prevData,
       [name]: value
     }));
-    // Clear error when user starts typing
     if (errors[name as keyof FormErrors]) {
       setErrors(prev => ({ ...prev, [name]: '' }));
     }
@@ -107,7 +105,6 @@ const LoginCreateAccount = () => {
       if (!response.ok) {
         setFromServer(data.error);
       } else {
-        // Store the token in localStorage
         localStorage.setItem('token', data.user.token);
         router.push('/user');
         setFromServer(data.message);

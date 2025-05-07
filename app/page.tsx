@@ -12,20 +12,14 @@ export default async function Home() {
   const { events, contact } = await getData();
 
   return (
-    <div className="font-sans bg-gray-50 text-gray-800 pt-2">
+    <div className="font-sans bg-gray-50 text-gray-800  pt-4 ">
       <Navbar />
-      <h1 className="sm:text-4xl sm:font-extrabold text-center text-green-600 mt-16 sm:mt-20 mt-25 tracking-tight text-3xl ">
-        Welcome to  Tech Club
+      <h1 id="home-page" className="sm:text-4xl sm:font-extrabold text-center text-green-600 bg-zinc-400 pt-30 pb-15 tracking-tight text-3xl">
+       <p className='animate-bounce'>Welcome to  Tech Club</p> 
       </h1>
       <div className="flex flex-col sm:flex-row justify-center mt-8 sm:mt-12 gap-4">
-        <Image
-          src="/images/aau.jpg"
-          alt="   Tech Club"
-          width={600}
-          height={400}
-          className="rounded-lg shadow-lg"
-        />
-      <details className='bg-white p-4 rounded-xl shadow-md hover:shadow-lg transition duration-300'><summary className="cursor-pointer font-semibold text-lg text-blue-700 mb-2">General Event Announcement
+       <img src="https://images.pexels.com/photos/1181677/pexels-photo-1181677.jpeg?auto=compress&cs=tinysrgb&w=600"/>
+      <details className='bg-white p-4 shadow-md hover:shadow-lg transition duration-300'><summary className="cursor-pointer font-semibold text-lg text-blue-700 mb-2">General Event Announcement
         <img src="https://thumbs.dreamstime.com/b/important-announcement-news-label-megaphone-vector-illustration-important-announcement-news-label-megaphone-334602537.jpg" alt="megaphone" width={800} height={800} 
         className="inline-block ml-2" />
       </summary>
@@ -106,9 +100,9 @@ export default async function Home() {
       <li>Building a collaborative and supportive tech community</li>
     </ul>
   </div>
-  <div className="mt-12 bg-gray-50 rounded-2xl shadow-md pb-6 sm:p-10">
+  <div className="mt-12 mb-5 bg-zinc-400 rounded-2xl shadow-md pb-6 sm:p-10">
     <h4 className="text-2xl font-semibold text-gray-800 mb-4">Contact Us</h4>
-    <ul className="mt-12 bg-white rounded-2xl shadow-lg p-6 sm:p-10 w-86 sm:w-full space-y-2">
+    <ul className="mt-12 bg-white shadow-lg p-6 sm:p-10 w-86 sm:w-full space-y-2">
     <li className="flex items-start gap-4">
     <span className="font-semibold w-24">Email:</span>
     <a
@@ -140,9 +134,11 @@ export default async function Home() {
 </ul>
   </div>
 </div>
-      <footer>
-        <p className='text-center text-white sm:p-10 p-6 bg-gray-700 font-bold text-xl'>{new Date().getFullYear()} &copy;Tech Club</p>
-      </footer>
+<footer className="w-full bg-gray-800">
+  <p className="text-center text-white sm:p-12 p-6 font-semibold text-xl mb-0">
+    {new Date().getFullYear()} &copy; Tech Club. All Rights Reserved.
+  </p>
+</footer>
     </div>
   )
 }

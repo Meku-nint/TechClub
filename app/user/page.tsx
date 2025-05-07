@@ -1,4 +1,5 @@
 'use client'
+
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import UserNavbar from './user_nav/page';
@@ -10,32 +11,31 @@ interface UserData {
   token: string;
   _id: string;
 }
-
+interface attendanceRecords{ 
+createdAt:string
+length:string
+_id:string;
+token:string;
+}
 interface AttendanceRecord {
+  present: number;
+  absent: number;
   _id: string;
   date: string;
   status: 'present' | 'absent';
 }
 
-interface AttendanceData {
-  attendanceRecords: AttendanceRecord[];
-  statistics: {
-    totalDays: number;
-    presentDays: number;
-    absentDays: number;
-    attendancePercentage: number;
-  };
-}
-
 const User = () => {
+  const [attendanceData, setAttendanceData] = useState<AttendanceRecord[]>([]);
+  const [attendanceRecords, setAttendanceRecords] = useState<attendanceRecords| null>(null);
+  const [showAttendance, setShowAttendance] = useState(false);
   const [userData, setUserData] = useState<UserData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [Token, setToken] = useState('');
+  const [fillAttendance,setFillAttendance]=useState(false);
   const [error, setError] = useState('');
-  const [attendanceData, setAttendanceData] = useState<AttendanceData | null>(null);
-  const [showAttendance, setShowAttendance] = useState(false);
-  const [isMarkingAttendance, setIsMarkingAttendance] = useState(false);
-  const [attendanceToken, setAttendanceToken] = useState('');
-  const [showTokenInput, setShowTokenInput] = useState(false);
+  const [present, setPresent] = useState(0);
+  const [absent, setAbsent] = useState(0);
   const router = useRouter();
 
   useEffect(() => {
@@ -48,9 +48,7 @@ const User = () => {
         }
 
         const response = await fetch('/api/user', {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
+          headers: { 'Authorization': `Bearer ${token}` }
         });
 
         if (!response.ok) {
@@ -72,184 +70,72 @@ const User = () => {
     };
 
     fetchUserData();
+    const attendanceFetch = async () => {
+      try {
+        const response = await fetch('/api/attendance/fetch', { method: 'GET' });
+        if (!response.ok) {
+          throw new Error('Failed to fetch attendance');
+        }
+        const data = await response.json(); 
+        setAttendanceRecords(data.lastRecord);           
+      } catch (error) {
+        console.error('Error fetching attendance:', error);
+      }
+    }
+    attendanceFetch();
   }, [router]);
+  useEffect(() => {
+    const presentCount = attendanceData.filter(records => records.status === 'present').length;
+    const absentCount = attendanceData.filter(records=> records.status === 'absent').length;
+    setPresent(presentCount);
+    setAbsent(absentCount);
+  }, [attendanceData]);
 
   const fetchAttendance = async () => {
     try {
       const response = await fetch('/api/attendance', {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
+        headers: { 'Authorization': `Bearer ${userData?._id}` }
       });
-      
+
       if (!response.ok) {
-        throw new Error('Failed to fetch attendance');
+        const errorData = await response.json();
+        alert(errorData.error);
+        return;
       }
-      
+
       const data = await response.json();
       setAttendanceData(data);
-      setShowAttendance(true);
     } catch (error) {
       console.error('Error fetching attendance:', error);
-      setShowAttendance(false);
     }
   };
 
-  const markAttendance = async () => {
+ 
+  const Attended = async (e: React.FormEvent) => {
+    e.preventDefault();
+   
+    if(Token!== attendanceRecords?.token){
+      alert('Please enter a valid token');
+      return;
+    }
     try {
-      if (!showTokenInput) {
-        setShowTokenInput(true);
-        return;
-      }
-
-      if (!attendanceToken) {
-        alert('Please enter the attendance token');
-        return;
-      }
-
-      setIsMarkingAttendance(true);
-      
-      // First, create the attendance record (default status: absent)
-      const createResponse = await fetch('/api/attendance', {
-        method: 'POST',
+      const response = await fetch('/api/attended', {
+        method: 'PATCH',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Authorization': `Bearer ${userData?._id}`,
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ token: attendanceToken })
+        body: JSON.stringify({
+          userId: userData?._id,
+          attendanceID: attendanceRecords?._id})
       });
-      
-      if (!createResponse.ok) {
-        const error = await createResponse.json();
-        if (error.error === "Invalid attendance token") {
-          alert('The attendance token you entered is incorrect. Please check and try again.');
-        } else if (error.error === "No attendance posted for today") {
-          alert('No attendance has been posted for today yet.');
-        } else if (error.error === "Attendance already marked for today") {
-          alert('You have already marked your attendance for today.');
-        } else {
-          throw new Error(error.error || 'Failed to mark attendance');
-        }
-        setAttendanceToken('');
-        return;
-      }
-
-      // Then, update the status to present
-      const updateResponse = await fetch('/api/attendance', {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ token: attendanceToken })
-      });
-      
-      if (!updateResponse.ok) {
-        const error = await updateResponse.json();
-        if (error.error === "Invalid attendance token") {
-          alert('The attendance token you entered is incorrect. Please check and try again.');
-        } else {
-          throw new Error(error.error || 'Failed to update attendance status');
-        }
-        setAttendanceToken('');
-        return;
-      }
-      
-      // Refresh attendance data after marking
-      await fetchAttendance();
-      setAttendanceToken('');
-      setShowTokenInput(false);
-      alert('Attendance marked successfully!');
-    } catch (error: any) {
-      console.error('Error marking attendance:', error);
-      alert(error.message || 'Failed to mark attendance');
-      setAttendanceToken('');
-      setShowTokenInput(false);
-    } finally {
-      setIsMarkingAttendance(false);
+      const data = await response.json();
+      alert(data.message);
+      if (!response.ok) throw new Error(data.message || 'Failed to update');
+    } catch (err) {
+      console.error(err);
     }
   };
-
-  const attendanceDetail = () => {
-    if (!showAttendance || !attendanceData) {
-      return (
-        <div className="text-center py-4">
-          <p className="text-gray-600">No attendance data available</p>
-        </div>
-      );
-    }
-
-    const { attendanceRecords, statistics } = attendanceData;
-
-    return (
-      <div className="bg-white rounded-lg shadow p-6">
-        <div className="flex justify-between items-center mb-6">
-          <h3 className="text-lg font-semibold">Your Attendance History</h3>
-          <button
-            onClick={markAttendance}
-            disabled={isMarkingAttendance}
-            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:bg-blue-300"
-          >
-            {isMarkingAttendance ? 'Marking...' : 'Mark Today\'s Attendance'}
-          </button>
-        </div>
-
-        <div className="grid grid-cols-2 gap-4 mb-6">
-          <div className="bg-green-100 p-4 rounded-lg">
-            <p className="text-gray-600">Present Days</p>
-            <p className="text-2xl font-bold text-green-600">{statistics.presentDays}</p>
-          </div>
-          <div className="bg-red-100 p-4 rounded-lg">
-            <p className="text-gray-600">Absent Days</p>
-            <p className="text-2xl font-bold text-red-600">{statistics.absentDays}</p>
-          </div>
-        </div>
-
-        <div className="mb-6">
-          <p className="text-gray-600">Attendance Percentage</p>
-          <div className="w-full bg-gray-200 rounded-full h-4">
-            <div
-              className={`h-4 rounded-full ${
-                statistics.attendancePercentage >= 50 ? 'bg-green-500' : 'bg-red-500'
-              }`}
-              style={{ width: `${statistics.attendancePercentage}%` }}
-            ></div>
-          </div>
-          <p className="text-right mt-2 font-medium">
-            {statistics.attendancePercentage.toFixed(1)}%
-          </p>
-        </div>
-
-        <div className="space-y-4">
-          <h4 className="font-semibold">Recent Attendance Records</h4>
-          {attendanceRecords.map((record) => (
-            <div
-              key={record._id}
-              className="flex justify-between items-center p-3 border rounded-lg"
-            >
-              <span className="text-gray-600">
-                {new Date(record.date).toLocaleDateString()}
-              </span>
-              <span
-                className={`px-3 py-1 rounded-full ${
-                  record.status === 'present'
-                    ? 'bg-green-100 text-green-800'
-                    : 'bg-red-100 text-red-800'
-                }`}
-              >
-                {record.status}
-              </span>
-            </div>
-          ))}
-        </div>
-      </div>
-    );
-  };
-
-  const handleNavbarClick = () => {
-    fetchAttendance();
-  };
-
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-100 pt-4">
@@ -275,167 +161,128 @@ const User = () => {
   return (
     <div className="min-h-screen bg-gray-100 pt-4">
       <UserNavbar />
-      <div className="sm:max-w-4xl sm:mx-auto w-full mt-24 p-6 bg-white rounded-xl shadow-md flex sm:flex-row flex-col gap-6 items-start border border-gray-200">
+      
+      <div className="sm:max-w-4xl sm:mx-auto w-full mt-24 p-6 bg-blue-100 rounded-xl shadow-md flex sm:flex-row flex-col gap-6 items-start border border-gray-200">
         <img
-          src="/images/profile.jpeg"
+          src="https://images.pexels.com/photos/546819/pexels-photo-546819.jpeg?auto=compress&cs=tinysrgb&w=600"
           alt="Profile"
-          width={200}
-          height={200}
-          className="rounded-lg shadow-md object-cover h-48 w-48"
+          className="rounded-lg shadow-md object-cover h-60 w-full"
         />
         <div className="text-gray-700">
-          <h2 className="text-2xl font-semibold mb-2">Full Name: {userData?.name}</h2>
+          <h2 className="text-xl font-semibold mb-2">Full Name: {userData?.name}</h2>
           <div className="space-y-2">
-            <p className="text-gray-600">
-              <span className="font-semibold">Email:</span> {userData?.email}
-            </p>
-            <p className="text-gray-600">
-              <span className="font-semibold">Username:</span> {userData?.username}
-            </p>
-            <p className="text-gray-600">
-              <span className="font-semibold">User ID:</span> {userData?._id}
-            </p>
-            <p className=''>welcome to aau tech club</p>
+            <p><span className="font-semibold">Email:</span> {userData?.email}</p>
+            <p><span className="font-semibold">Username:</span> {userData?.username}</p>
+            <p>Welcome to Tech Club</p>
           </div>
         </div>
       </div>
 
-      <h1 className="sm:text-4xl text-3xl font-semibold text-center text-gray-800 mt-16 mb-6 tracking-tight">
-        Your Attendance Overview
-      </h1>
-      <p className="text-lg text-gray-700 text-blue-900 animate-bounce animate-pulse sm:w-1/2 w-3/4 mx-auto">
-        Don't forget if your attendance falls below 50%, you will be automatically removed from the boot camp{' '}
-        <a 
-          href='#' 
-          className='underline text-red-700 cursor-pointer' 
+      <div className="max-w-4xl mx-auto px-4 py-12 text-center">
+        <h1 className="text-3xl sm:text-4xl font-semibold text-gray-800 tracking-tight mb-4">
+          Your Attendance Overview
+        </h1>
+        <p className="text-lg text-gray-600 mb-6">
+          Don’t forget — if your attendance falls below <span className="font-semibold text-red-600">50%</span>, 
+          you will be automatically removed from the boot camp.
+        </p>
+        <p
+        
           onClick={(e) => {
             e.preventDefault();
             fetchAttendance();
+            setShowAttendance(!showAttendance);
           }}
+          className="py-5 cursor-pointer text-2xl bg-gray-300 "
         >
-          see your attendance information
-        </a>
-      </p>
-
-      {showAttendance && attendanceData && (
-        <div className="sm:max-w-4xl sm:mx-auto w-full mt-8 p-6 bg-white rounded-xl shadow-md">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-semibold text-gray-800">Your Attendance Details</h2>
-            <div className="flex items-center space-x-4">
-              {showTokenInput && (
-                <div className="flex flex-col space-y-2">
-                  <input
-                    type="text"
-                    value={attendanceToken}
-                    onChange={(e) => setAttendanceToken(e.target.value)}
-                    placeholder="Enter today's attendance token"
-                    className="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                  <p className="text-sm text-gray-500">
-                    Enter the token provided by your instructor
-                  </p>
-                </div>
-              )}
-              <button
-                onClick={markAttendance}
-                disabled={isMarkingAttendance}
-                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:bg-blue-300"
-              >
-                {isMarkingAttendance ? 'Marking...' : showTokenInput ? 'Submit Token' : 'Mark Today\'s Attendance'}
-              </button>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4 mb-6">
-            <div className="bg-green-100 p-4 rounded-lg">
-              <p className="text-gray-600">Present Days</p>
-              <p className="text-2xl font-bold text-green-600">{attendanceData.statistics.presentDays}</p>
-            </div>
-            <div className="bg-red-100 p-4 rounded-lg">
-              <p className="text-gray-600">Absent Days</p>
-              <p className="text-2xl font-bold text-red-600">{attendanceData.statistics.absentDays}</p>
-            </div>
-          </div>
-
-          <div className="mb-6">
-            <div className="flex justify-between items-center mb-2">
-              <p className="text-gray-600">Attendance Percentage</p>
-              <p className="font-medium">
-                {attendanceData.statistics.attendancePercentage.toFixed(1)}%
-              </p>
-            </div>
-            <div className="w-full bg-gray-200 rounded-full h-4">
-              <div
-                className={`h-4 rounded-full ${
-                  attendanceData.statistics.attendancePercentage >= 50 ? 'bg-green-500' : 'bg-red-500'
+          See your attendance information detail
+        </p>
+      </div>
+      {showAttendance && (
+        <div className="sm:w-2/3 w-full mx-auto bg-white rounded-lg shadow p-6">
+          <h2 className="text-2xl font-semibold mb-4">Attendance Records</h2>
+          {attendanceData.map((record) => (
+            <div key={record._id} className="flex justify-between items-center py-2 border-b border-gray-200">
+              <span className="text-gray-700">{new Date(record.date).toDateString()}</span>
+              <span
+                className={`px-3 py-1 rounded-full text-white text-sm font-medium ${
+                  record.status === 'present' ? 'bg-green-500' : 'bg-red-500'
                 }`}
-                style={{ width: `${attendanceData.statistics.attendancePercentage}%` }}
-              ></div>
+              >
+                {record.status}
+              </span>
             </div>
-          </div>
-
-          <div className="space-y-4">
-            <h3 className="font-semibold text-lg">Attendance History</h3>
-            <div className="max-h-96 overflow-y-auto">
-              {attendanceData.attendanceRecords.map((record) => (
-                <div
-                  key={record._id}
-                  className="flex justify-between items-center p-3 border rounded-lg mb-2"
-                >
-                  <div className="flex items-center space-x-4">
-                    <span className="text-gray-600">
-                      {new Date(record.date).toLocaleDateString('en-US', {
-                        weekday: 'long',
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric'
-                      })}
-                    </span>
-                    <span className="text-gray-500">
-                      {new Date(record.date).toLocaleTimeString('en-US', {
-                        hour: '2-digit',
-                        minute: '2-digit'
-                      })}
-                    </span>
-                  </div>
-                  <span
-                    className={`px-3 py-1 rounded-full ${
-                      record.status === 'present'
-                        ? 'bg-green-100 text-green-800'
-                        : 'bg-red-100 text-red-800'
-                    }`}
-                  >
-                    {record.status.charAt(0).toUpperCase() + record.status.slice(1)}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
-
-      <div className="flex w-3/4 mx-auto gap-4 pt-8 mb-8">
+          ))}
+            <div className="flex w-3/4 mx-auto gap-4 pt-8 mb-8">
         <div className="flex-1 bg-green-100 border border-green-400 text-green-800 rounded-xl shadow-lg p-6 text-center">
-          <p className="text-4xl font-bold">
-            {attendanceData?.statistics?.attendancePercentage.toFixed(1) || '0'}%
-          </p>
-          <p className="text-lg font-medium mt-2">Overall Attendance</p>
+          <p className="text-lg font-medium mt-2">Total Present: {present}</p>
         </div>
         <div className="flex-1 bg-red-100 border border-red-400 text-red-800 rounded-xl shadow-lg p-6 text-center">
-          <p className="text-4xl font-bold">
-            {attendanceData?.statistics?.absentDays || '0'}
-          </p>
-          <p className="text-lg font-medium mt-2">Total Absences</p>
+          <p className="text-lg font-medium mt-2">Total Absences: {absent}</p>
         </div>
       </div>
+        </div>
+        
+      )} 
+<div className="flex flex-col items-center justify-center bg-gray-100 p-4">
+  <div
+    onMouseOver={fetchAttendance}
+    className="flex items-center justify-center w-80 h-30 rounded-md shadow-lg bg-amber-600  overflow-hidden"
+    style={{
+      background: `conic-gradient(#4CAF50 ${present / (present + absent) * 100}%, #f44336 0)`,
+    }}
+  >
+    <span className="text-center text-xl font-bold text-gray-800">
+      {`Overall Attendance: ${((present / (present + absent)) * 100).toFixed(2)}%`}
+    </span>
+  </div>
+</div>
+{fillAttendance && (
+  <div>
+    {attendanceRecords ? (
+      <form className="flex flex-col w-1/2 mx-auto max-w-sm bg-white rounded-t-2xl shadow-lg overflow-hidden"
+      onSubmit={Attended}
+      >
+        <p className="text-lg font-bold text-white text-right px-5 py-3 bg-blue-500 rounded-t-2xl">
+          Date: {attendanceRecords.createdAt.slice(0, 10)}
+        </p>
+        <p className="text-lg font-bold text-black text-right px-5 py-3">
+          Length: {attendanceRecords.length}
+        </p>
+        <div className="flex flex-col gap-3 p-5">
+          <input
+            className="w-full py-3 px-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+            placeholder="Enter OTP"
+            type="text"onChange={(e) => setToken(e.target.value)}
+          />
+          <button
+            className="w-full py-3 bg-amber-500 rounded-lg text-white font-semibold hover:bg-amber-600 active:bg-black active:text-white transition-all duration-200"
+          >
+            Present
+          </button>
+        </div>
+      </form>
+    ) : (
+      <div className="text-center text-gray-500">No records found</div>
+    )}
+  </div>
+)}
 
+
+<div className='flex flex-col items-center justify-center w-cover'>
+  <p className="text-lg font-bold text-gray-700 ml-auto px-5 bg-amber-500 py-3 rounded-t-lg cursor-pointer hover:bg-amber-600 active:bg-black active:text-white"
+   onClick={(e) => {
+    fetchAttendance();
+    setFillAttendance(!fillAttendance);
+  }}
+  >fill attendance</p>
+</div>
       <footer>
-        <p className='text-center text-white sm:p-10 p-5 bg-gray-700 font-bold text-xl'>
+        <p className="text-center text-white sm:p-10 p-5 bg-gray-700 font-bold text-xl">
           {new Date().getFullYear()} &copy; Tech Club
         </p>
       </footer>
     </div>
   );
 };
-
 export default User;

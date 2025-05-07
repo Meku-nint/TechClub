@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import connectToDatabase from "../../../lib/connectdb";
 import models from "../../../model/schema";
-const {Attendance} = models;
+const {Attendance,UserAttendance,User} = models;
 export async function POST(request) {
     await connectToDatabase();
     try {
@@ -20,13 +20,31 @@ export async function POST(request) {
         token
        })
        await newAttendance.save();
-       return NextResponse.json(
+    const lastAttendance=await Attendance.findOne({}).sort({createdAt:-1});
+    const AttendanceId=lastAttendance._id;
+    const attendanceDate=lastAttendance.today;
+    const users = await User.find({}, "_id name");
+    for(let i=0;i<users.length;i++){
+        const userId=users[i]._id;
+        const userName=users[i].name;
+        const userAttendance=new UserAttendance({
+            userId,
+            userName,
+            date:attendanceDate,
+            status:"absent",
+            attendanceID:AttendanceId
+        })
+        await userAttendance.save();
+    }
+
+    return NextResponse.json(
         {message:`the attendance is posted successfully the token is ${token} `},
         {status:201}
     )
+
     } catch (error) {
         return NextResponse.json(
-            {error:"unable to add attendance"},
+            {error:error.message},
             {status:404}
         )
     }

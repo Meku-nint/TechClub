@@ -96,6 +96,10 @@ const UserAttendanceSchema = new mongoose.Schema({
     ref: 'User',
     required: true
   },
+  userName: {
+    type: String,
+    required: true
+  },
   date: {
     type: Date,
     required: true,
@@ -103,18 +107,14 @@ const UserAttendanceSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['present', 'absent'],
+    default: 'absent',
     required: true
   },
-  createdAt: {
-    type: Date,
-    default: Date.now
+  attendanceID: {
+    type: String,
+    required: true
   }
 });
-
-// Add index for efficient querying
-UserAttendanceSchema.index({ userId: 1, date: 1 }, { unique: true });
-
 const Admin=mongoose.models.Admin || mongoose.model("Admin", adminSchema);
 const Attendance=mongoose.models.Attendance || mongoose.model("Attendance", attendanceSchema);
 const User = mongoose.models.User || mongoose.model("User", userSchema);

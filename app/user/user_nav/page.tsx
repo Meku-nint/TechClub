@@ -13,12 +13,12 @@ const UserNavbar = () => {
   };
 
   return (
-    <nav className="bg-white shadow-lg">
+    <nav className="shadow-lg fixed top-0 left-0 right-0 bg-black">
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex justify-between h-16">
           <div className="flex">
             <div className="flex-shrink-0 flex items-center">
-              <Link href="/user" className="text-xl font-bold text-gray-800">
+              <Link href="/user" className="text-xl font-bold text-white">
                 AAU Tech Club
               </Link>
             </div>
@@ -28,7 +28,7 @@ const UserNavbar = () => {
             <div className="relative">
               <button
                 onClick={() => setShowDropdown(!showDropdown)}
-                className="flex items-center space-x-2 text-gray-700 hover:text-gray-900 focus:outline-none"
+                className="flex items-center space-x-2 text-white hover:text-whitesmoke focus:outline-none"
               >
                 <span>Menu</span>
                 <svg

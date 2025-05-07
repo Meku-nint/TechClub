@@ -2,9 +2,7 @@ import bcrypt from 'bcryptjs';
 import { NextResponse } from "next/server";
 import connectToDatabase from "../../../lib/connectdb";
 import models from "../../../model/schema";
-
 const { User } = models;
-
 export async function POST(request) {
   try {
     await connectToDatabase();
@@ -17,8 +15,6 @@ export async function POST(request) {
         { status: 400 }
       );
     }
-
-    // Find user by username
     const user = await User.findOne({ username });
     if (!user) {
       return NextResponse.json(
@@ -26,8 +22,6 @@ export async function POST(request) {
         { status: 401 }
       );
     }
-
-    // Compare password
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
       return NextResponse.json(
@@ -35,13 +29,9 @@ export async function POST(request) {
         { status: 401 }
       );
     }
-
-    // Generate a new token for the session
     const token = Math.random().toString(36).slice(2);
     user.token = token;
     await user.save();
-
-    // Return success response with user data (excluding password)
     const { password: _, ...userWithoutPassword } = user.toObject();
     return NextResponse.json(
       { 

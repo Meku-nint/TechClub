@@ -3,21 +3,16 @@ import connectToDatabase from "../../../../lib/connectdb";
 import models from "../../../../model/schema";
 const { User, Attendance, UserAttendance } = models;
 
-// GET - Get all attendance records for a specific day
 export async function GET(request) {
   try {
     await connectToDatabase();
-    
-    // Get token from headers
-    const token = request.headers.get('authorization')?.split(' ')[1];
+        const token = request.headers.get('authorization')?.split(' ')[1];
     if (!token) {
       return NextResponse.json(
         { error: "No token provided" },
         { status: 401 }
       );
     }
-
-    // Verify admin user
     const admin = await User.findOne({ token, role: 'admin' });
     if (!admin) {
       return NextResponse.json(
@@ -25,8 +20,6 @@ export async function GET(request) {
         { status: 401 }
       );
     }
-
-    // Get date from query parameters
     const { searchParams } = new URL(request.url);
     const date = searchParams.get('date');
     
@@ -36,8 +29,6 @@ export async function GET(request) {
         { status: 400 }
       );
     }
-
-    // Check if attendance is posted for the day
     const postedAttendance = await Attendance.findOne({ date });
     if (!postedAttendance) {
       return NextResponse.json(
@@ -46,7 +37,6 @@ export async function GET(request) {
       );
     }
 
-    // Get all user attendance records for the day
     const userAttendance = await UserAttendance.find({ date })
       .populate('userId', 'name email username')
       .sort({ createdAt: -1 });
@@ -102,8 +92,6 @@ export async function POST(request) {
         { status: 400 }
       );
     }
-
-    // Update or create user attendance record
     const userAttendance = await UserAttendance.findOneAndUpdate(
       { userId, date },
       { status },
