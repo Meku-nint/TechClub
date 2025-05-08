@@ -148,7 +148,7 @@ interface Student {
                     {showAttendance && attendanceData.length > 0 && (
   <div className="attendance-info mt-4">
     <h3>Attendance Records</h3>
-    <div className="attendance-container w-full h-40 overflow-y-auto">
+    <div className="attendance-container border border-black w-full h-40 overflow-y-auto">
       <div >
 
       {attendanceData.map((record) => (

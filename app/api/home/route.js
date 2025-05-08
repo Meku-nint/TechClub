@@ -6,7 +6,13 @@ const { Event, AdminInfo } = models;
 export async function GET() {
     try {
         await connectToDatabase();
-        const events = await Event.find();
+        const events = await Event.findOne().sort({createdAt: -1});
+        if (!events) {
+            return NextResponse.json(
+                { error: "No events found" },
+                { status: 404 }
+            );
+        }
         const contact = await AdminInfo.findOne();
         return NextResponse.json({ events, contact });
     } catch (error) {

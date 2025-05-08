@@ -1,4 +1,3 @@
-import Image from 'next/image'
 import Navbar from './navbar/page'
 async function getData() {
   const res = await fetch('http://localhost:3000/api/home', { cache: 'no-store' });
@@ -7,7 +6,6 @@ async function getData() {
   }
   return res.json();
 }
-
 export default async function Home() {
   const { events, contact } = await getData();
 
@@ -15,7 +13,7 @@ export default async function Home() {
     <div className="font-sans bg-gray-50 text-gray-800  pt-4 ">
       <Navbar />
       <h1 id="home-page" className="sm:text-4xl sm:font-extrabold text-center text-green-600 bg-zinc-400 pt-30 pb-15 tracking-tight text-3xl">
-       <p className='animate-bounce'>Welcome to  Tech Club</p> 
+       <p className=''>Welcome to  Tech Club</p> 
       </h1>
       <div className="flex flex-col sm:flex-row justify-center mt-8 sm:mt-12 gap-4">
        <img src="https://images.pexels.com/photos/1181677/pexels-photo-1181677.jpeg?auto=compress&cs=tinysrgb&w=600"/>
@@ -115,7 +113,7 @@ export default async function Home() {
   <li className="flex items-start gap-3">
     <span className="font-semibold w-24">Telegram:</span>
     <a
-      href="https://t.me/TechClubAAU"
+      href="https://t.me/AAU_TECHNOLOGY_CLUB_2"
       target="_blank"
       rel="noopener noreferrer"
       className="text-blue-600 hover:text-blue-800 underline break-all"
