@@ -4,6 +4,7 @@ import models from "../../../model/schema.js";
 const{UserAttendance}=models;
 export async function GET(request){
     try {
+
         await connectToDatabase();
         const lastAttendance = await UserAttendance.findOne().sort({ createdAt: -1 });  
         if (!lastAttendance) {
@@ -20,3 +21,6 @@ export async function GET(request){
         return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
     }
 }
+
+
+// for checking purpose.
