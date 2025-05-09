@@ -1,6 +1,5 @@
 "use client";
 import { useEffect, useState } from "react";
-
 const FillAttendance = () => {
   const [attendance, setAttendance] = useState([{
     userName: "",
@@ -9,7 +8,6 @@ const FillAttendance = () => {
     userId: "",
     attendanceID: ""
   }]);
-
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -19,12 +17,10 @@ const FillAttendance = () => {
         });
         const data = await response.json();
         if (!response.ok) {
-          alert(data.message);
           throw new Error(data.message || 'Could not fetch users.');
         }
         setAttendance(data);
       } catch {
-        alert("Error fetching attendance data");
         console.log("Error fetching attendance data");
       }
     };
@@ -52,7 +48,6 @@ const FillAttendance = () => {
       console.log('Attendance updated successfully:', data);
     } catch (error) {
       console.error('Error updating attendance:', error);
-      alert('Failed to update attendance. Please try again.');
     }
   };
   const makeAbsent=async(userId:string,attendanceID:string)=>{
@@ -77,7 +72,6 @@ const FillAttendance = () => {
       console.log('Attendance updated successfully:', data);
     } catch (error) {
       console.error('Error updating attendance:', error);
-      alert('Failed to update attendance. Please try again.');
     }
   }
   return (
