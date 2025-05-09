@@ -55,7 +55,6 @@ const User = () => {
             router.push('/login');
             return;
           }
-         // throw new Error('Failed to fetch user data');
         }
 
         const data = await response.json();
@@ -113,7 +112,6 @@ const User = () => {
         console.error('Error fetching attendance:', error);
       }
     };
-    attendanceFetch();
   const Attended = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -241,7 +239,6 @@ const User = () => {
             End: {attendanceRecords.length} <strong className="text-red-600 px-2 text-2xl bg-white rounded-xl" onClick={() => setFillAttendance(false)}>X</strong>
           </p>
         </div>
-
         <div className="bg-gray-100 p-4 rounded-xl shadow-md">
           <input
             id="token"

@@ -8,12 +8,14 @@ interface FormErrors {
   username?: string;
   password?: string;
 }
-
 const LoginCreateAccount = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [isClient, setIsClient] = useState(false); 
+  const [isCreate, setIsCreate] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [fromServer, setFromServer] = useState('');
+  const [fromServers, setFromServers] = useState('');
+  const [forgot,setForgot] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
   const [createData, setCreateData] = useState({
     name: '',
@@ -21,6 +23,7 @@ const LoginCreateAccount = () => {
     username: '',
     password: ''
   });
+  const [token,setOtp] = useState('');
   const [loginData, setLoginData] = useState({
     username: '',
     password: ''
@@ -41,6 +44,29 @@ const LoginCreateAccount = () => {
     }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
+  };
+  const forgotHandler = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setFromServers('');
+    try {
+      const response = await fetch('/api/forgot', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ token})
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        setFromServers(data.error);
+      } else {
+        setFromServers(data.message);
+      }
+    } catch (error) {
+      setFromServers('An error occurred while retrieving your password. Please try again.');
+    }
+    setIsLoading(false);
   };
 
   const validateCreateForm = () => {
@@ -106,6 +132,7 @@ const LoginCreateAccount = () => {
         setFromServer(data.error);
       } else {
         localStorage.setItem('token', data.user.token);
+
         router.push('/user');
         setFromServer(data.message);
       }
@@ -140,19 +167,21 @@ const LoginCreateAccount = () => {
           username: '',
           password: '',
         });
-        setIsLogin(true); // Switch to login form after successful registration
+        setIsLogin(true);
       }
     } catch (error) {
       setFromServer('An error occurred while creating your account. Please try again.');
     }
     setIsLoading(false);
+    setIsCreate(false); // Hide the create account form after submission
+
   };
 
   return (
     <div>
       <Navbar />
-      {isClient && !isLogin && (
-        <div style={{ backgroundColor: 'hsl(215.3, 25%, 26.7%)' }} className="mt-16 flex justify-center items-center h-screen pb-4">
+      {isCreate && (
+        <div  className="mt-16 flex justify-center items-center h-screen pb-4">
           <form onSubmit={createAccountHandlerSubmit} className="bg-white p-4 m-3 rounded-lg shadow-lg w-full max-w-md">
             <h2 className="text-2xl font-bold text-center text-gray-800 mb-4">Create an Account</h2>
             {fromServer && (
@@ -236,7 +265,11 @@ const LoginCreateAccount = () => {
             </button>
             <p className="text-center text-sm text-gray-600 mt-4">
               Already have an account?{' '}
-              <a href="#" onClick={() => setIsLogin(true)} className="text-blue-600 hover:underline">
+              <a href="#" onClick={() =>
+                 {setIsLogin(true)
+                  setForgot(false)
+                  setIsCreate(false);
+                 }} className="text-blue-600 hover:underline">
                 Login here
               </a>
             </p>
@@ -303,13 +336,36 @@ const LoginCreateAccount = () => {
             </button>
             <p className="text-center text-sm text-gray-600 mt-4">
               I have no account?{' '}
-              <a href="#" onClick={() => setIsLogin(false)} className="text-blue-600 hover:underline">
-                Create account here
+              <a href="#" onClick={() => {setIsLogin(false)
+                setForgot(false)
+                setIsCreate(true)
+              }} className="text-blue-600 hover:underline">
+                Create account
               </a>
+              <a href="#"className='text-blue-800 hover:underline ml-4'onClick={() => {
+                
+                setForgot(true)
+                setIsLogin(false)
+              }}>forgot password</a>
             </p>
           </form>
         </div>
       )}
+      {
+        isClient && forgot && (
+          <div >
+              <form onSubmit={forgotHandler} className='flex flex-col items-center justify-center h-screen w-2/3 mx-auto'>
+              <div  className="bg-smoke p-4 m-3 rounded-lg shadow-lg w-full max-w-md flex justify-center flex-col">
+              <p className="text-sm font-semibold text-center text-gray-800 mb-6">{fromServers}</p>
+                <input type="text" required placeholder="Enter your OTP" className="p-3 border rounded-md focus:outline-none focus:ring-2 w-2/3 mx-auto"value={token} onChange={(e) => setOtp(e.target.value)}/>
+                <button type="submit" className="w-2/3 mx-auto mt-6 py-3 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300 bg-blue-600 text-white hover:bg-blue-700 cursor-pointer">
+                  Retrieve Password
+                </button> 
+              </div>        
+              </form>
+          </div>
+        )
+      }
 
       <footer>
         <p className="text-center text-white p-10 bg-black font-bold text-xl">{new Date().getFullYear()} &copy; Tech Club</p>

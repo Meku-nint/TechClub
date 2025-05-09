@@ -45,6 +45,11 @@ const userSchema = new Schema({
         type: String,
         default:"token",
         required: false
+    },
+    forgot:{
+        type:String,
+        default:"token",
+        required:false
     }
 });
 

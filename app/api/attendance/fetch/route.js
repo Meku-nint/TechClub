@@ -30,7 +30,6 @@ export async function GET() {
     }
 
   } catch (error) {
-    console.error("Error in GET /api/attendance/fetch:", error);
     return NextResponse.json(
       { error: "Server error" },
       { status: 500 }
