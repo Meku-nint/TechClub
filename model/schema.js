@@ -119,7 +119,7 @@ const UserAttendanceSchema = new mongoose.Schema({
     type: String,
     required: true
   }
-});
+}, { timestamps: true });
 const Admin=mongoose.models.Admin || mongoose.model("Admin", adminSchema);
 const Attendance=mongoose.models.Attendance || mongoose.model("Attendance", attendanceSchema);
 const User = mongoose.models.User || mongoose.model("User", userSchema);

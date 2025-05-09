@@ -1,6 +1,5 @@
 'use client';
 import { useEffect, useState } from 'react';
-
 interface Student {
   _id: string;
   name: string;
@@ -16,6 +15,7 @@ interface Student {
     present: number;
     absent: number;
     _id: string;
+    userId:string;
     date: string;
     status: 'present' | 'absent';
   }
@@ -77,7 +77,7 @@ interface Student {
           return;
         }
   
-        const response = await fetch(`/api/studentAttendance?userId=${userId}`, {
+        const response = await fetch(`/api/attendance?userId=${userId}`, {
           method: 'GET',
           headers: {
             'Authorization': `Bearer ${userId}`,
@@ -86,7 +86,6 @@ interface Student {
   
         if (!response.ok) {
           const errorData = await response.json();
-          alert(errorData.error || 'Failed to fetch attendance data.');
           return;
         }
   
@@ -94,8 +93,6 @@ interface Student {
         setAttendanceData(data); 
         console.log('Attendance data:', data);
       } catch (error) {
-        console.error('Error fetching attendance:', error);
-        alert('An error occurred while fetching attendance data.');
       }
   
       setShowAttendance((prevState) => !prevState); 
@@ -124,7 +121,6 @@ interface Student {
         </div>
       );
     }
-  
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
         <div className="w-full max-w-4xl">
@@ -145,12 +141,11 @@ interface Student {
                     <button className="p-3 m-5 bg-amber-400 cursor-pointer hover:bg-amber-500" onClick={() => fetchAttendance(student._id)}>
                       See him attendance
                     </button>
-                    {showAttendance && attendanceData.length > 0 && (
+{showAttendance && attendanceData.length >0&&attendanceData[0].userId==student._id&& (
   <div className="attendance-info mt-4">
     <h3>Attendance Records</h3>
     <div className="attendance-container border border-black w-full h-40 overflow-y-auto">
       <div >
-
       {attendanceData.map((record) => (
         <div key={record._id} className="attendance-record">
           <div className="flex justify-between outline-0 mb-3 bg-gray-200">
@@ -171,15 +166,14 @@ interface Student {
     </div>
   </div>
   </div>
-
 )}
       </div>
-                  <button
+            <button
                     onClick={() => handleDelete(student._id)}
                     className="mt-3 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
                   >
                     Delete
-                  </button>
+             </button>
                 </div>
               </div>
             ))}
@@ -192,6 +186,4 @@ interface Student {
       </div>
     );
   };
-  
-
 export default ManageStudent;

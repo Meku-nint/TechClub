@@ -13,18 +13,18 @@ const FillAttendance = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await fetch('/api/attendance', {
+        const response = await fetch('/api/userAttendance', {
           method: 'GET',
-          headers: {
-            'Content-Type': 'application/json'
-          }
+         
         });
         const data = await response.json();
         if (!response.ok) {
+          alert(data.message);
           throw new Error(data.message || 'Could not fetch users.');
         }
         setAttendance(data);
       } catch {
+        alert("Error fetching attendance data");
         console.log("Error fetching attendance data");
       }
     };
@@ -82,10 +82,10 @@ const FillAttendance = () => {
   }
   return (
     
-    <div className="container mx-auto p-8 bg-gray-50 rounded-lg shadow-2xl max-w-4xl mt-10">  
-      <p className="text-lg text-gray-600 mb-4"><span className="font-bold">Date: {attendance.length > 0 && attendance[0].date.slice(0, 10)}</span></p>
+    <div className="sm:w-2/3 mx-auto container p-4 px-auto bg-gray-50 rounded-lg shadow-2xl mt-10">  
+      <p className="text-lg text-gray-600 mb-4 bg-amber-700 p-2 text-center fixed top-0 left-0 right-0"><span className="font-bold">Date: {attendance.length > 0 && attendance[0].date.slice(0, 10)}</span></p>
       <h1 className="text-3xl font-semibold text-center text-gray-800 mb-6">Fill Attendance</h1>
-      <table className="min-w-full table-auto bg-white rounded-lg shadow-md border border-gray-200">
+      <table className="w-full table-auto bg-white justify-center  rounded-lg shadow-md border border-gray-200">
         <thead>
           <tr className="bg-green-600 text-white">
             <th className="px-6 py-4 text-left font-medium">Full Name</th>

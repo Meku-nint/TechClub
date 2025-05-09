@@ -21,9 +21,7 @@ const AdminPage = () => {
   })
 
   useEffect(() => {
-    // Check if token exists in localStorage
     const token = localStorage.getItem('adminToken');
-    
     if (!token) {
       router.push('/adminPageLogin');
     }
@@ -34,6 +32,8 @@ const AdminPage = () => {
     localStorage.removeItem('adminToken');
     router.push('/adminPageLogin');
   };
+
+
 
   const addAdminHandler = async() => {
    var email = prompt("Admin email");
@@ -48,7 +48,7 @@ const AdminPage = () => {
     return ;
    }
    try {
-    const response=await fetch('/api/admin',{
+    const response=await fetch('/api/admin/admins',{
         method:'POST',
         headers:{
             'Content-Type': 'application/json'

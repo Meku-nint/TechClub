@@ -60,7 +60,7 @@ const AdminLogin = () => {
     setErrorMessage('');
 
     try {
-      const response = await fetch('/api/admin/login', {
+      const response = await fetch('/api/admin', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

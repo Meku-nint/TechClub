@@ -5,7 +5,6 @@ const { UserAttendance } = models;
 export async function GET(request) {
   try {
     await connectToDatabase();
-
     const authHeader = request.headers.get("authorization");
     if (!authHeader) {
       return NextResponse.json({ error: "Authorization header missing" }, { status: 401 });
