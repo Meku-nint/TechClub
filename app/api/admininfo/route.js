@@ -7,13 +7,7 @@ export async function POST(request) {
     try {
         const body=await request.json();
         const {email,telegram,phone,location,prove}=body;
-        const existingAdmin=await AdminInfo.findOneAndDelete({prove});
-        if(!existingAdmin){
-            return NextResponse.json(
-                {error:"Admin information not found"},
-                {status:404}
-            )
-        }
+        await AdminInfo.findOneAndDelete({prove});
         const newAdminInfo=new AdminInfo({
            email,
            telegram,
