@@ -12,13 +12,13 @@ const compat = new FlatCompat({
 const eslintConfig = [
   ...compat.extends("next/core-web-vitals", "next/typescript"),
 
-  // 👇 Custom override for rules
   {
     rules: {
-      "no-unused-vars": "off",
-       "react/no-unescaped-entities": "off" // disables unused variable rule
+      "no-unused-vars": "off", // disables unused variable errors
+      "react/no-unescaped-entities": "off", // disables JSX escape rule
     },
   },
 ];
+
 
 export default eslintConfig;
