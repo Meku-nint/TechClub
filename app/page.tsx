@@ -1,6 +1,6 @@
 import Navbar from './navbar/page'
 async function getData() {
-  const res = await fetch('/api/home', { cache: 'no-store' });
+  const res = await fetch('https://techclub-lac.vercel.app/api/home', { cache: 'no-store' });
   if (!res.ok) {
     throw new Error('Failed to fetch data');
   }
