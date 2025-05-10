@@ -2,9 +2,8 @@ import { NextResponse } from 'next/server';
 import connectToDatabase from "../../../lib/connectdb.js";
 import models from "../../../model/schema.js";
 const{UserAttendance}=models;
-export async function GET(request){
+export async function GET(){
     try {
-
         await connectToDatabase();
         const lastAttendance = await UserAttendance.findOne().sort({ createdAt: -1 });  
         if (!lastAttendance) {

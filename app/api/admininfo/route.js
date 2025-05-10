@@ -8,6 +8,12 @@ export async function POST(request) {
         const body=await request.json();
         const {email,telegram,phone,location,prove}=body;
         const existingAdmin=await AdminInfo.findOneAndDelete({prove});
+        if(!existingAdmin){
+            return NextResponse.json(
+                {error:"Admin information not found"},
+                {status:404}
+            )
+        }
         const newAdminInfo=new AdminInfo({
            email,
            telegram,
@@ -21,6 +27,7 @@ export async function POST(request) {
                     { status: 200 }
                 );
     } catch (error) {
+        console.error("Error updating admin information:", error);
                 return NextResponse.json(
                     {error:"unable to update the admin information"},
                     {status:404}

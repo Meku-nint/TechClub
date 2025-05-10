@@ -20,6 +20,7 @@ export async function POST(request) {
         })
         
     } catch (error) {
+        console.error("Error creating admin:", error);
         return NextResponse.json(
             { error: "Server error" },
             { status: 500 }

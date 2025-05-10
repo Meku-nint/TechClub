@@ -64,6 +64,7 @@ const LoginCreateAccount = () => {
         setFromServers(data.message);
       }
     } catch (error) {
+      console.error('Error submitting form:', error);
       setFromServers('An error occurred while retrieving your password. Please try again.');
     }
     setIsLoading(false);
@@ -137,6 +138,7 @@ const LoginCreateAccount = () => {
         setFromServer(data.message);
       }
     } catch (error) {
+      console.error('Error submitting form:', error);
       setFromServer('An error occurred while logging in. Please try again.');
     }
     setIsLoading(false);
@@ -170,6 +172,7 @@ const LoginCreateAccount = () => {
         setIsLogin(true);
       }
     } catch (error) {
+      console.error('Error submitting form:', error);
       setFromServer('An error occurred while creating your account. Please try again.');
     }
     setIsLoading(false);

@@ -183,7 +183,7 @@ const User = () => {
   <br />
   Should your attendance fall below this threshold, it will result in automatic removal from the program, as we want to ensure every participant fully benefits from the opportunities provided. We trust that you will remain committed to your learning journey and contribute to the success of the team.
   <br />
-  Thank you for your dedication, and don't hesitate to reach out if you have any questions or concerns regarding your attendance or the program.
+  Thank you for your dedication, and do not hesitate to reach out if you have any questions or concerns regarding your attendance or the program.
 </p>
     <div className="py-5 cursor-pointer text-2xl bg-gray-300 rounded-lg shadow-md hover:bg-gray-350 text-center font-semibold text-gray-800 transition duration-300"
     >        <p className='sm:w-2/3 w-7/8 mx-auto text-lg hover:text-white hover:bg-gray-400 border-2  p-3 m-3'

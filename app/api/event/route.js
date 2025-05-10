@@ -28,6 +28,7 @@ export async function POST(request){
             )
         }
     } catch (error) {
+        console.error("Error posting event:", error);
         return NextResponse.json(
             {error:"unable to post the event"},
             {status:404}

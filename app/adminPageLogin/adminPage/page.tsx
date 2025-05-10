@@ -33,9 +33,9 @@ const AdminPage = () => {
     router.push('/adminPageLogin');
   };
   const addAdminHandler = async() => {
-   let email = prompt("Admin email");
-   let password = prompt("Admin password");
-   let uniqueCode=prompt("Enter the unique code");
+   const email = prompt("Admin email");
+   const password = prompt("Admin password");
+   const uniqueCode=prompt("Enter the unique code");
    if(uniqueCode!=="ADMIN"){
     alert ("The unique code is not correct");
     return;

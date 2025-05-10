@@ -31,6 +31,7 @@ export async function PATCH( request) {
       { status: 200 }
     );
   } catch (error) {
+    console.error("Error updating attendance:", error);
     return NextResponse.json(
       { error: "Unable to update attendance" },
       { status: 500 }
