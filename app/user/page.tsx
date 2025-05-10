@@ -268,7 +268,7 @@ const User = () => {
       <div className="flex flex-col items-center justify-center w-cover">
         <p
           className="text-lg font-bold text-gray-700 ml-auto px-5 bg-amber-500 py-3 rounded-t-lg cursor-pointer hover:bg-amber-600 active:bg-black active:text-white"
-          onClick={(e) => {
+          onClick={() => {
             attendanceFetch();
             setFillAttendance(!fillAttendance);
           }}
