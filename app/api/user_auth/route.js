@@ -30,14 +30,15 @@ export async function POST(request) {
       );
     }
  
-    const { password: _, ...userWithoutPassword } = user.toObject();
-    return NextResponse.json(
-      { 
-        message: "Login successful",
-        user: userWithoutPassword
-      },
-      { status: 200 }
-    );
+   const userObj = user.toObject();
+delete userObj.password;
+return NextResponse.json(
+  {
+    message: "Login successful",
+    user: userObj
+  },
+  { status: 200 }
+);
 
   } catch (error) {
     console.error("Error during login:", error);
