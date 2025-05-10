@@ -39,8 +39,8 @@ const SetEventAndHomePage = () => {
         else{
             alert (data.message);
         }
-    } catch (error) {
-        alert ("there is problem on adding admin");
+    } catch  {
+        alert ("There is problem");
     }
   }
   const eventSubmitHandler=async(e:React.FormEvent<HTMLFormElement>)=>{
@@ -61,8 +61,8 @@ const SetEventAndHomePage = () => {
         else{
             alert (data.message);
         }
-    } catch (error) {
-        alert ("there is problem on posting event");
+    } catch  {
+        alert ("There is problem");
     }
     setIsLoading(false);
     setEvent({

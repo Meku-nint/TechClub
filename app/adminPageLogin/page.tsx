@@ -76,7 +76,7 @@ const AdminLogin = () => {
         localStorage.setItem('adminToken', data.token);
         router.push('/adminPageLogin/adminPage');
       }
-    } catch (error) {
+    } catch {
       setErrorMessage('An error occurred while logging in. Please try again.');
     } finally {
       setIsLoading(false);

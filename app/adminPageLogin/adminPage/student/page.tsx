@@ -85,7 +85,6 @@ interface Student {
         });
   
         if (!response.ok) {
-          const errorData = await response.json();
           return;
         }
   
@@ -93,6 +92,8 @@ interface Student {
         setAttendanceData(data); 
         console.log('Attendance data:', data);
       } catch (error) {
+        console.error('Error fetching attendance:', error);
+        alert('Error fetching attendance data');
       }
   
       setShowAttendance((prevState) => !prevState); 

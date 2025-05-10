@@ -32,13 +32,10 @@ const AdminPage = () => {
     localStorage.removeItem('adminToken');
     router.push('/adminPageLogin');
   };
-
-
-
   const addAdminHandler = async() => {
-   var email = prompt("Admin email");
-   var password = prompt("Admin password");
-   var uniqueCode=prompt("Enter the unique code");
+   let email = prompt("Admin email");
+   let password = prompt("Admin password");
+   let uniqueCode=prompt("Enter the unique code");
    if(uniqueCode!=="ADMIN"){
     alert ("The unique code is not correct");
     return;
@@ -62,7 +59,7 @@ const AdminPage = () => {
     else{
         alert (data.message);
     }
-} catch (error) {
+} catch  {
     alert("There is problem on adding admin")
    }
 
@@ -120,8 +117,8 @@ const attendanceHandler=(e: React.ChangeEvent<HTMLInputElement>)=>{
       else{
         alert(data.message);
       }
-    } catch (error) {
-      alert("There is error in posting attendance")
+    } catch {
+      alert("There is error in posting attendance");
     }
     setAttendance({
       today:'',
