@@ -161,6 +161,8 @@ const LoginCreateAccount = () => {
       const data = await response.json();
       if (!response.ok) {
         setFromServer(data.error);
+            setIsCreate(true); 
+
       } else {
         setFromServer(data.message);
         setCreateData({
@@ -170,13 +172,14 @@ const LoginCreateAccount = () => {
           password: '',
         });
         setIsLogin(true);
+        setIsCreate(false); 
+
       }
     } catch (error) {
       console.error('Error submitting form:', error);
       setFromServer('An error occurred while creating your account. Please try again.');
     }
     setIsLoading(false);
-    setIsCreate(false); // Hide the create account form after submission
 
   };
 
